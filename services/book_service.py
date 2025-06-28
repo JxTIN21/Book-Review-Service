@@ -23,10 +23,10 @@ class BookService:
         
         # Cache miss - fetch from database
         books = self.db.query(Book).offset(skip).limit(limit).all()
-        book_responses = [BookResponse.from_orm(book) for book in books]
+        book_responses = [BookResponse.model_validate(book) for book in books]
         
         # Update cache (fire and forget)
-        books_dict = [book.dict() for book in book_responses]
+        books_dict = [book.model_dump() for book in book_responses]
         await self.cache.set(cache_key, books_dict)
         
         return book_responses
@@ -48,7 +48,7 @@ class BookService:
         # Invalidate books cache
         await self.cache.invalidate_pattern("books:list:*")
         
-        return BookResponse.from_orm(db_book)
+        return BookResponse.model_validate(db_book)
     
     async def get_book_by_id(self, book_id: int) -> Book:
         """Get book by ID with validation"""

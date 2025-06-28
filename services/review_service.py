@@ -35,7 +35,7 @@ class ReviewService:
             .all()
         )
         
-        review_responses = [ReviewResponse.from_orm(review) for review in reviews]
+        review_responses = [ReviewResponse.model_validate(review) for review in reviews]
         
         # Cache results
         reviews_dict = [review.dict() for review in review_responses]
@@ -51,7 +51,7 @@ class ReviewService:
             raise ValueError(f"Book with id {book_id} not found")
         
         # Create review
-        db_review = Review(book_id=book_id, **review_data.dict())
+        db_review = Review(book_id=book_id, **review_data.model_dump())
         self.db.add(db_review)
         self.db.commit()
         self.db.refresh(db_review)
@@ -59,4 +59,4 @@ class ReviewService:
         # Invalidate related caches
         await self.cache.invalidate_pattern(f"reviews:book:{book_id}:*")
         
-        return ReviewResponse.from_orm(db_review)
+        return ReviewResponse.model_validate(db_review)

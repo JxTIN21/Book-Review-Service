@@ -20,6 +20,10 @@ class BookResponse(BookBase):
     class Config:
         from_attributes = True
 
+        model_config = {
+           "from_attributes": True
+        }
+
 class ReviewBase(BaseModel):
     reviewer_name: str = Field(..., min_length=1, max_length=255)
     rating: float = Field(..., ge=1.0, le=5.0)
