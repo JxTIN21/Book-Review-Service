@@ -8,7 +8,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from database import Base
-from models import Book, Review  # Import all models
+from models import Book, Review, User  # Import all models
 
 config = context.config
 if config.config_file_name is not None:
